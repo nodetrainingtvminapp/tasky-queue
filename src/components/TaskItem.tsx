@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ interface TaskItemProps {
   onDragStart: (id: string) => void;
   onDragOver: (id: string) => void;
   onDragEnd: () => void;
+  onEditTask: (task: Task) => void;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -43,7 +43,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onUpdateText,
   onDragStart,
   onDragOver,
-  onDragEnd
+  onDragEnd,
+  onEditTask
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
@@ -95,6 +96,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
     setEditText(task.text);
     setIsEditing(false);
   };
+
+  const handleFullEdit = () => {
+    onEditTask(task);
+  };
   
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
@@ -112,13 +117,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
     }
   };
 
-  // Generate a pastel background color based on the task text
   const getTaskColor = () => {
-    // Simple hash function to generate a number from a string
     const hashCode = task.text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    // Use the hash to generate a hue value (0-360)
     const hue = hashCode % 360;
-    // Return a pastel HSL color
     return { backgroundColor: `hsl(${hue}, 80%, 96%)` };
   };
 
@@ -135,7 +136,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onClick={() => !isEditing && handleEdit()}
     >
       <div className="flex-none pt-0.5">
         <GripVertical className="h-5 w-5 text-muted-foreground/40 cursor-grab active:cursor-grabbing" />
@@ -148,7 +148,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
           "h-5 w-5 rounded-full border-2 transition-colors duration-200 data-[state=checked]:bg-primary",
           task.completed ? "border-primary" : "border-muted-foreground/30"
         )}
-        onClick={(e) => e.stopPropagation()}
       />
       
       <div className="flex-1 min-w-0">
@@ -160,7 +159,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
               onChange={(e) => setEditText(e.target.value)}
               className="flex-1"
               autoFocus
-              onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleSaveEdit();
@@ -172,10 +170,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             <Button
               size="icon"
               variant="default"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSaveEdit();
-              }}
+              onClick={handleSaveEdit}
               className="h-8 w-8 flex-none"
             >
               <Check className="h-4 w-4" />
@@ -183,10 +178,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             <Button
               size="icon"
               variant="outline"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCancelEdit();
-              }}
+              onClick={handleCancelEdit}
               className="h-8 w-8 flex-none"
             >
               <X className="h-4 w-4" />
@@ -206,13 +198,20 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit();
-                  }}
+                  onClick={handleEdit}
                   className="h-7 w-7 rounded-full"
+                  title="Quick edit"
                 >
                   <Edit className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleFullEdit}
+                  className="h-7 w-7 rounded-full"
+                  title="Full edit"
+                >
+                  <Edit className="h-3.5 w-3.5 text-primary" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -220,17 +219,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       size="icon" 
                       variant="ghost" 
                       className="h-7 w-7 rounded-full"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       <MoreHorizontal className="h-3.5 w-3.5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(task.id);
-                      }}
+                      onClick={() => onDelete(task.id)}
                       className="text-destructive focus:text-destructive flex items-center gap-2 cursor-pointer"
                     >
                       <Trash2 className="h-4 w-4" /> Delete
@@ -250,7 +245,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       "h-6 px-2 text-xs flex gap-1 items-center",
                       getPriorityColor(task.priority)
                     )}
-                    onClick={(e) => e.stopPropagation()}
                   >
                     {getPriorityIcon(task.priority)}
                     <span>{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
@@ -258,28 +252,19 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-32">
                   <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUpdatePriority(task.id, 'low');
-                    }}
+                    onClick={() => onUpdatePriority(task.id, 'low')}
                     className="flex items-center gap-2 cursor-pointer"
                   >
                     <Flag className="h-4 w-4 text-emerald-600" /> Low
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUpdatePriority(task.id, 'medium');
-                    }}
+                    onClick={() => onUpdatePriority(task.id, 'medium')}
                     className="flex items-center gap-2 cursor-pointer"
                   >
                     <Flag className="h-4 w-4 text-amber-600" /> Medium
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUpdatePriority(task.id, 'high');
-                    }}
+                    onClick={() => onUpdatePriority(task.id, 'high')}
                     className="flex items-center gap-2 cursor-pointer"
                   >
                     <Flag className="h-4 w-4 text-rose-600" /> High
@@ -296,7 +281,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       "h-6 px-2 text-xs flex gap-1 items-center",
                       task.dueDate ? getDueDateClass(task.dueDate) : "text-muted-foreground"
                     )}
-                    onClick={(e) => e.stopPropagation()}
                   >
                     <Clock className="h-3 w-3" />
                     {task.dueDate ? formatDate(task.dueDate) : "No date"}
@@ -309,10 +293,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onUpdateDueDate(task.id, null);
-                        }}
+                        onClick={() => onUpdateDueDate(task.id, null)}
                         className="h-7 px-2 text-xs"
                       >
                         Clear

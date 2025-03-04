@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import TaskInput from '@/components/TaskInput';
 import TaskList from '@/components/TaskList';
 import TaskFilters from '@/components/TaskFilters';
@@ -18,7 +17,8 @@ import {
   reorderTasks,
   filterTasks,
   sortTasks,
-  loadTasks
+  loadTasks,
+  updateTask
 } from '@/lib/taskManager';
 
 const Index = () => {
@@ -26,6 +26,7 @@ const Index = () => {
   const [filter, setFilter] = useState<TaskFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('order');
   const [isLoading, setIsLoading] = useState(true);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   useEffect(() => {
     // Load tasks from localStorage on component mount
@@ -35,12 +36,33 @@ const Index = () => {
   }, []);
 
   const handleAddTask = (text: string, priority: Priority, dueDate: Date | null) => {
-    const updatedTasks = createTask(tasks, text, priority, dueDate);
-    setTasks(updatedTasks);
-    toast({
-      title: "Task added",
-      description: "Your new task has been added to the list.",
-    });
+    if (editingTask) {
+      // Update existing task
+      const updatedTask = {
+        ...editingTask,
+        text,
+        priority,
+        dueDate
+      };
+      
+      const updatedTasks = updateTask(tasks, updatedTask);
+      setTasks(updatedTasks);
+      setEditingTask(null);
+      
+      toast({
+        title: "Task updated",
+        description: "Your task has been updated successfully.",
+      });
+    } else {
+      // Add new task
+      const updatedTasks = createTask(tasks, text, priority, dueDate);
+      setTasks(updatedTasks);
+      
+      toast({
+        title: "Task added",
+        description: "Your new task has been added to the list.",
+      });
+    }
   };
 
   const handleToggleCompletion = (id: string) => {
@@ -111,6 +133,14 @@ const Index = () => {
     setTasks(updatedTasks);
   };
 
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+  };
+
   // Filter and sort tasks
   const filteredTasks = filterTasks(tasks, filter);
   const sortedAndFilteredTasks = sortTasks(filteredTasks, sortBy);
@@ -139,26 +169,41 @@ const Index = () => {
           </p>
         </header>
 
-        <TaskInput onAddTask={handleAddTask} />
+        <section className="mb-8 p-5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm border border-border/50">
+          <h2 className="text-lg font-medium mb-4">
+            {editingTask ? "Edit Task" : "Add New Task"}
+          </h2>
+          <TaskInput 
+            onAddTask={handleAddTask} 
+            editingTask={editingTask}
+            onCancelEdit={handleCancelEdit}
+          />
+        </section>
 
-        <TaskFilters
-          filter={filter}
-          sortBy={sortBy}
-          tasksCount={tasksCount}
-          onFilterChange={setFilter}
-          onSortChange={setSortBy}
-        />
+        <section className="mb-6">
+          <TaskFilters
+            filter={filter}
+            sortBy={sortBy}
+            tasksCount={tasksCount}
+            onFilterChange={setFilter}
+            onSortChange={setSortBy}
+          />
+        </section>
 
-        <TaskList
-          tasks={sortedAndFilteredTasks}
-          isLoading={isLoading}
-          onToggleCompletion={handleToggleCompletion}
-          onDelete={handleDeleteTask}
-          onUpdatePriority={handleUpdatePriority}
-          onUpdateDueDate={handleUpdateDueDate}
-          onUpdateText={handleUpdateText}
-          onReorder={handleReorderTasks}
-        />
+        <section className="p-5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm border border-border/50">
+          <h2 className="text-lg font-medium mb-4">Your Tasks</h2>
+          <TaskList
+            tasks={sortedAndFilteredTasks}
+            isLoading={isLoading}
+            onToggleCompletion={handleToggleCompletion}
+            onDelete={handleDeleteTask}
+            onUpdatePriority={handleUpdatePriority}
+            onUpdateDueDate={handleUpdateDueDate}
+            onUpdateText={handleUpdateText}
+            onReorder={handleReorderTasks}
+            onEditTask={handleEditTask}
+          />
+        </section>
       </div>
     </div>
   );

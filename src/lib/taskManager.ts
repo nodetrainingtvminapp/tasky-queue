@@ -1,4 +1,3 @@
-
 import { nanoid } from 'nanoid';
 
 export type Priority = 'low' | 'medium' | 'high';
@@ -72,6 +71,15 @@ export const createTask = (
   };
   
   const updatedTasks = [...tasks, newTask];
+  saveTasks(updatedTasks);
+  return updatedTasks;
+};
+
+// Update an entire task
+export const updateTask = (tasks: Task[], updatedTask: Task): Task[] => {
+  const updatedTasks = tasks.map(task => 
+    task.id === updatedTask.id ? updatedTask : task
+  );
   saveTasks(updatedTasks);
   return updatedTasks;
 };

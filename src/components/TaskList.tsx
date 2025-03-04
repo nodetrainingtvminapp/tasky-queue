@@ -13,6 +13,7 @@ interface TaskListProps {
   onUpdateDueDate: (id: string, dueDate: Date | null) => void;
   onUpdateText: (id: string, text: string) => void;
   onReorder: (sourceId: string, destinationId: string) => void;
+  onEditTask: (task: Task) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -23,7 +24,8 @@ const TaskList: React.FC<TaskListProps> = ({
   onUpdatePriority,
   onUpdateDueDate,
   onUpdateText,
-  onReorder
+  onReorder,
+  onEditTask
 }) => {
   const [draggedTaskId, setDraggedTaskId] = React.useState<string | null>(null);
 
@@ -78,6 +80,7 @@ const TaskList: React.FC<TaskListProps> = ({
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
+          onEditTask={onEditTask}
         />
       ))}
     </div>
