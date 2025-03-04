@@ -119,14 +119,22 @@
   .priority-high {
     @apply bg-rose-100 text-rose-800 border border-rose-200;
   }
+  
+  /* Priority toggle styles */
+  .priority-low-toggle[data-state="on"] {
+    @apply bg-emerald-100 text-emerald-800 border-emerald-300 ring-1 ring-emerald-300;
+  }
+  
+  .priority-medium-toggle[data-state="on"] {
+    @apply bg-amber-100 text-amber-800 border-amber-300 ring-1 ring-amber-300;
+  }
+  
+  .priority-high-toggle[data-state="on"] {
+    @apply bg-rose-100 text-rose-800 border-rose-300 ring-1 ring-rose-300;
+  }
 
   /* Task card hover effect */
   .task-card {
     @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-2px];
-  }
-
-  /* Editing styles */
-  .edit-active {
-    @apply ring-2 ring-primary/50 shadow-lg;
   }
 }
