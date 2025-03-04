@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221.2 83% 53.3%;
+    --primary: 262 83% 58%; /* Changed to vibrant purple */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -23,7 +23,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 262 83% 94%; /* Light purple accent */
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83% 53.3%;
+    --ring: 262 83% 58%; /* Match primary */
 
     --radius: 0.75rem;
   }
@@ -41,7 +41,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-gradient-to-br from-background to-accent/30 text-foreground font-sans min-h-screen;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -105,5 +105,28 @@
   
   .due-future {
     @apply text-gray-500;
+  }
+
+  /* Priority colors - updated to be more vibrant */
+  .priority-low {
+    @apply bg-emerald-100 text-emerald-800 border border-emerald-200;
+  }
+  
+  .priority-medium {
+    @apply bg-amber-100 text-amber-800 border border-amber-200;
+  }
+  
+  .priority-high {
+    @apply bg-rose-100 text-rose-800 border border-rose-200;
+  }
+
+  /* Task card hover effect */
+  .task-card {
+    @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-2px];
+  }
+
+  /* Editing styles */
+  .edit-active {
+    @apply ring-2 ring-primary/50 shadow-lg;
   }
 }

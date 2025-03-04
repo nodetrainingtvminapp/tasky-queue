@@ -123,12 +123,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/70">
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent/30">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <header className="mb-10 text-center">
-          <h1 className="text-4xl font-medium tracking-tight mb-4">Task List</h1>
+          <div className="inline-block mb-4 p-2 rounded-full bg-primary/10">
+            <div className="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center">
+              <span className="text-2xl">📝</span>
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            Task List
+          </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
-            A minimal task manager to keep track of your daily activities
+            A colorful task manager to keep track of your daily activities
           </p>
         </header>
 
