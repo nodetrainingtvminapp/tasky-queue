@@ -120,17 +120,29 @@
     @apply bg-rose-100 text-rose-800 border border-rose-200;
   }
   
-  /* Priority toggle styles */
-  .priority-low-toggle[data-state="on"] {
-    @apply bg-emerald-100 text-emerald-800 border-emerald-300 ring-1 ring-emerald-300;
+  /* Priority radio styles */
+  :root input[type="radio"]:checked[value="low"] + label {
+    @apply text-emerald-700;
   }
   
-  .priority-medium-toggle[data-state="on"] {
-    @apply bg-amber-100 text-amber-800 border-amber-300 ring-1 ring-amber-300;
+  :root input[type="radio"]:checked[value="medium"] + label {
+    @apply text-amber-700;
   }
   
-  .priority-high-toggle[data-state="on"] {
-    @apply bg-rose-100 text-rose-800 border-rose-300 ring-1 ring-rose-300;
+  :root input[type="radio"]:checked[value="high"] + label {
+    @apply text-rose-700;
+  }
+  
+  :root input[type="radio"][value="low"] + label svg {
+    @apply text-emerald-600;
+  }
+  
+  :root input[type="radio"][value="medium"] + label svg {
+    @apply text-amber-600;
+  }
+  
+  :root input[type="radio"][value="high"] + label svg {
+    @apply text-rose-600;
   }
 
   /* Task card hover effect */

@@ -7,8 +7,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Plus, Flag, Save, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Priority, Task } from '@/lib/taskManager';
+import { Label } from "@/components/ui/label";
 
 interface TaskInputProps {
   onAddTask: (text: string, priority: Priority, dueDate: Date | null) => void;
@@ -68,25 +69,35 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, editingTask, onCancelE
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 justify-between items-center">
-        <div className="inline-flex gap-2 items-center">
-          <span className="text-sm text-muted-foreground">Priority:</span>
-          <ToggleGroup 
-            type="single" 
-            value={priority}
-            onValueChange={(value) => value && setPriority(value as Priority)}
-            className="bg-white/80 backdrop-blur-sm border rounded-lg p-1"
+      <div className="flex flex-wrap gap-6 justify-between items-start">
+        <div className="space-y-3">
+          <Label className="text-sm text-muted-foreground">Priority:</Label>
+          <RadioGroup 
+            value={priority} 
+            onValueChange={(value) => setPriority(value as Priority)}
+            className="flex gap-4"
           >
-            <ToggleGroupItem value="low" className="rounded-md data-[state=on]:bg-priority-low data-[state=on]:text-green-800">
-              <Flag className="h-4 w-4 mr-1" /> Low
-            </ToggleGroupItem>
-            <ToggleGroupItem value="medium" className="rounded-md data-[state=on]:bg-priority-medium data-[state=on]:text-amber-800">
-              <Flag className="h-4 w-4 mr-1" /> Medium
-            </ToggleGroupItem>
-            <ToggleGroupItem value="high" className="rounded-md data-[state=on]:bg-priority-high data-[state=on]:text-rose-800">
-              <Flag className="h-4 w-4 mr-1" /> High
-            </ToggleGroupItem>
-          </ToggleGroup>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="low" id="low" className="border-emerald-500 text-emerald-600" />
+              <Label htmlFor="low" className="flex items-center gap-1 cursor-pointer text-emerald-700">
+                <Flag className="h-4 w-4" /> Low
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="medium" id="medium" className="border-amber-500 text-amber-600" />
+              <Label htmlFor="medium" className="flex items-center gap-1 cursor-pointer text-amber-700">
+                <Flag className="h-4 w-4" /> Medium
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="high" id="high" className="border-rose-500 text-rose-600" />
+              <Label htmlFor="high" className="flex items-center gap-1 cursor-pointer text-rose-700">
+                <Flag className="h-4 w-4" /> High
+              </Label>
+            </div>
+          </RadioGroup>
         </div>
 
         <div className="inline-flex gap-2 items-center">
@@ -105,6 +116,19 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, editingTask, onCancelE
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
+              <div className="p-2 flex justify-between items-center border-b">
+                <span className="text-sm font-medium">Due date</span>
+                {dueDate && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setDueDate(null)}
+                    className="h-8 px-2 text-xs"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
               <Calendar
                 mode="single"
                 selected={dueDate || undefined}
